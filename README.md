@@ -3,7 +3,7 @@
 ## Giới thiệu
 Đề tài tập trung xây dựng hệ thống Data Lakehouse hiện đại theo kiến trúc Medallion (Bronze - Silver - Gold) nhằm quản lý và phân tích dữ liệu bán lẻ trực tuyến. Hệ thống kết hợp sức mạnh xử lý của Apache Spark và khả năng lưu trữ mạnh mẽ của Azure Data Lake Storage (ADLS) Gen2.
 
-## Tập dữ liệu (Dataset)
+## Tập dữ liệu
 Đề tài sử dụng tập dữ liệu Online Retail II chứa toàn bộ giao dịch xảy ra trong 2 năm của một công ty bán lẻ trực tuyến tại Anh.
 * **Nguồn**: UCI Machine Learning Repository - Online Retail II
 * **Kích thước**: ~1.07 triệu dòng giao dịch.
@@ -42,5 +42,12 @@ Retail-Data-Lakehouse-Pipeline/
 ## Hướng dẫn cài đặt nhanh
 1. **Clone dự án:** 
    `git clone https://github.com/your-username/Retail-Data-Lakehouse-Pipeline.git`
+
 2.  **Cấu hình môi trường:** Tạo file `.env` và điền thông tin Azure Credentials theo mẫu `.env.example`.
-3.  **Khởi chạy hạ tầng:** Truy cập thư mục `docker/` và chạy `docker-compose up -d`.
+
+3. Sử dụng hệ thống Cloud chung
+
+*   Dự án sử dụng chung một tài khoản Microsoft Fabric để tối ưu hóa tài nguyên và chi phí.
+*   **Thành viên:** Đăng nhập theo thông tin tài khoản nhóm cung cấp tại [Microsoft Fabric](https://app.fabric.microsoft.com/).
+*   **Workspace:** `Nhom5_Retail_Analytics_Workspace`.
+
