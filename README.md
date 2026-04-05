@@ -18,7 +18,7 @@
 
 ## Cấu trúc thư mục
 ```bash
-Retail-Data-Lakehouse-Pipeline/
+retail-data-lakehouse-pipeline/
 ├── docker/         # Cấu hình hạ tầng hệ thống
 ├── data/           # Chứa tập dữ liệu gốc online_retail_II.csv
 ├── bronze/         # Scripts nạp dữ liệu từ HDFS Local lên Azure Bronze 

@@ -1,0 +1,9 @@
+# Thiết lập mặc định: xử lý mọi file text và ép về LF khi commit
+* text=auto eol=lf
+
+# Chỉ định cụ thể cho các file script hoặc cấu hình Docker
+*.sh text eol=lf
+*.py text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf 
