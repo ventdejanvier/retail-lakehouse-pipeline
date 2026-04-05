@@ -3,4 +3,20 @@
         <name>fs.defaultFS</name>
         <value>hdfs://nhom5-master:9000</value>
     </property>
+
+    <!-- Cấu hình kết nối Azure nhom5storage -->
+    <property>
+        <name>fs.azure.account.auth.type.nhom5storage.dfs.core.windows.net</name>
+        <value>SharedKey</value>
+    </property>
+
+    <property>
+        <name>fs.azure.account.key.nhom5storage.dfs.core.windows.net</name>
+        <value>${env.AZURE_STORAGE_ACCESS_KEY}</value>
+    </property>
+
+    <property>
+        <name>fs.azure.account.auth.type.nhom5storage.dfs.core.windows.net</name>
+        <value>SharedKey</value>
+    </property>
 </configuration>
