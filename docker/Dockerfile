@@ -30,11 +30,12 @@ RUN wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1-bin-hadoo
     mv spark-3.5.1-bin-hadoop3 $SPARK_HOME && \
     rm spark-3.5.1-bin-hadoop3.tgz
 
+RUN rm -f $SPARK_HOME/jars/hadoop-azure-*.jar $SPARK_HOME/jars/azure-storage-*.jar
+
 # Tải thư viện kết nối Azure ADLS Gen2 
-RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/3.4.3/hadoop-azure-3.4.3.jar -P $SPARK_HOME/jars/ && \
+RUN wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-azure/3.3.4/hadoop-azure-3.3.4.jar -P $SPARK_HOME/jars/ && \
     wget https://repo1.maven.org/maven2/com/microsoft/azure/azure-storage/8.6.6/azure-storage-8.6.6.jar -P $SPARK_HOME/jars/ && \
-    wget https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/2.2.5.Final/wildfly-openssl-2.2.5.Final.jar -P $SPARK_HOME/jars/ && \
-    wget https://repo1.maven.org/maven2/com/azure/azure-storage-blob/12.25.1/azure-storage-blob-12.25.1.jar -P $SPARK_HOME/jars/
+    wget https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/2.2.5.Final/wildfly-openssl-2.2.5.Final.jar -P $SPARK_HOME/jars/
 
 # 5. Tạo User hadoop và các thư mục hệ thống
 RUN useradd -m -s /bin/bash hadoop && \
