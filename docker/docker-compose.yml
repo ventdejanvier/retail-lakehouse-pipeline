@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # --- MASTER NODE ---
+  nhom5-master:
+    build: .
+    image: nhom5-hadoop-jdk21
+    user: root # Bắt buộc là root để entrypoint.sh có quyền chown lại folder SSH
+    hostname: nhom5-master
+    container_name: nhom5-master
+    # ĐÃ XÓA dòng command cũ để ưu tiên chạy ENTRYPOINT từ Dockerfile
+    ports:
+      - "9870:9870" # HDFS Web UI
+      - "8088:8088" # YARN Web UI
+      - "9000:9000" # NameNode RPC
+    volumes:
+      - ../data:/data
+      - ../bronze:/opt/hadoop/bronze
+      - ../silver:/opt/hadoop/silver
+      - ../gold:/opt/hadoop/gold
+      - ../audit:/opt/hadoop/audit # Giữ nguyên các tầng data bạn đã cấu hình
+      - ./config:/opt/hadoop/etc/hadoop
+      - ./hadoop_data/namenode:/opt/hadoop/data/nameNode
+      - ./ssh/master:/home/hadoop/.ssh # Đã khớp với user hadoop
+    env_file:
+      - ../.env
+    networks:
+      - nhom5-lakehouse-net
+
+  # --- SLAVE NODE ---
+  nhom5-slave1:
+    build: .
+    image: nhom5-hadoop-jdk21
+    user: root
+    hostname: nhom5-slave1
+    container_name: nhom5-slave1
+    # ĐÃ XÓA dòng command cũ
+    volumes:
+      - ../data:/data
+      - ../bronze:/opt/hadoop/bronze
+      - ../silver:/opt/hadoop/silver
+      - ./config:/opt/hadoop/etc/hadoop
+      - ./hadoop_data/datanode:/opt/hadoop/data/dataNode
+      - ./ssh/slave1:/home/hadoop/.ssh
+    env_file:
+      - ../.env
+    networks:
+      - nhom5-lakehouse-net
+
+networks:
+  nhom5-lakehouse-net:
+    name: nhom5-lakehouse-net
+    driver: bridge
