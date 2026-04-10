@@ -50,6 +50,7 @@ services:
     ports:
       - "21000:21000"
 
-networks:
-  default:
-    name: atlas-network
+    networks:
+      nhom5-lakehouse-net:
+        external: true
+    
