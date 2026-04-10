@@ -1,0 +1,56 @@
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: atlas-zookeeper
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: atlas-kafka
+    restart: unless-stopped
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: atlas-zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://atlas-kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: atlas-es
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+
+  atlas:
+    image: sburn/apache-atlas:2.3.0
+    container_name: atlas
+    restart: unless-stopped
+    depends_on:
+      - kafka
+      - elasticsearch
+    environment:
+      ATLAS_KAFKA_BOOTSTRAP_SERVERS: atlas-kafka:9092
+      ATLAS_ELASTICSEARCH_ENDPOINTS: http://atlas-es:9200
+      ATLAS_SERVER_HTTP_PORT: 21000
+    ports:
+      - "21000:21000"
+
+    networks:
+      nhom5-lakehouse-net:
+        external: true
+    
