@@ -33,8 +33,7 @@ services:
     image: nhom5-hadoop-jdk21
     user: root
     hostname: nhom5-slave1
-    container_name: nhom5-slave1
-    # ĐÃ XÓA dòng command cũ
+    container_name: nhom5-slave1 
     volumes:
       - ../data:/data
       - ../bronze:/opt/hadoop/bronze
@@ -46,7 +45,6 @@ services:
       - ../.env
     networks:
       - nhom5-lakehouse-net
-
 networks:
   nhom5-lakehouse-net:
     name: nhom5-lakehouse-net
