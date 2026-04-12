@@ -1,63 +1,49 @@
+import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 
 # INIT SPARK
 spark = SparkSession.builder \
-    .appName("Silver Layer Audit") \
+    .appName("Silver Audit - Azure Parquet") \
     .getOrCreate()
 
-print("===== SILVER LAYER AUDIT STARTED =====")
+print("===== SILVER LAYER AUDIT =====")
 
-# LOAD DATA
-df = spark.read.csv("file:///opt/hadoop/silver", header=True, inferSchema=True)
+storage_account = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
+access_key = os.getenv("AZURE_STORAGE_ACCESS_KEY")
 
-# 1. ROW COUNT
+spark.conf.set(
+    f"fs.azure.account.key.{storage_account}.dfs.core.windows.net",
+    access_key
+)
+
+silver_path = f"abfss://silver@{storage_account}.dfs.core.windows.net/cleaned_retail_data"
+
+# READ DATA
+df = spark.read.parquet(silver_path)
+
+# AUDIT
 row_count = df.count()
-print(f"Total Rows: {row_count}")
 
-# 2. DUPLICATE CHECK
-dup_df = df.groupBy(df.columns).count().filter("count > 1")
-dup_count = dup_df.count()
+dup_count = df.groupBy(df.columns).count().filter("count > 1").count()
 
-print(f"Duplicate Rows: {dup_count}")
-
-if dup_count > 0:
-    print("Example duplicate records:")
-    dup_df.show(3, truncate=False)
-
-# 3. NULL CHECK
 null_count = 0
-if "CustomerID" in df.columns:
-    null_rows = df.filter(col("CustomerID").isNull())
-    null_count = null_rows.count()
+if "Customer ID" in df.columns:
+    null_count = df.filter(col("Customer ID").isNull()).count()
 
-    if null_count > 0:
-        print("Example NULL records:")
-        null_rows.show(3, truncate=False)
-
-print(f"Null Rows (CustomerID): {null_count}")
-
-# 4. NEGATIVE CHECK
 neg_count = 0
 if "Quantity" in df.columns:
-    neg_rows = df.filter(col("Quantity") < 0)
-    neg_count = neg_rows.count()
-
-    if neg_count > 0:
-        print("Example negative records:")
-        neg_rows.show(3, truncate=False)
-
-print(f"Negative Quantity Rows: {neg_count}")
+    neg_count = df.filter(col("Quantity") < 0).count()
 
 # SAVE REPORT
 report_path = "/opt/hadoop/audit/silver_report.txt"
 
 with open(report_path, "w") as f:
-    f.write("SILVER LAYER AUDIT REPORT\n")
+    f.write("SILVER LAYER AUDIT REPORT \n")
     f.write("===========================\n")
     f.write(f"Total Rows: {row_count}\n")
     f.write(f"Duplicate Rows: {dup_count}\n")
-    f.write(f"Null Rows (CustomerID): {null_count}\n")
+    f.write(f"Null Rows (Customer ID): {null_count}\n")
     f.write(f"Negative Quantity Rows: {neg_count}\n")
 
 print(f"Report saved to: {report_path}")
