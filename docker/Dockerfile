@@ -68,8 +68,12 @@ RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
     chmod 0600 ~/.ssh/authorized_keys && \
     echo "StrictHostKeyChecking no" >> ~/.ssh/config
 
-# 9. Nạp file Entrypoint (Trở lại quyền root để nạp file hệ thống)
+#Cài đặt thư viện hỗ trợ AI/ML
 USER root
+RUN apt-get update && apt-get install -y python3-pip && \
+    pip3 install --no-cache-dir numpy --break-system-packages
+
+# 9. Nạp file Entrypoint (Trở lại quyền root để nạp file hệ thống)
 # Lưu ý: File entrypoint.sh phải nằm cùng thư mục với Dockerfile này
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
