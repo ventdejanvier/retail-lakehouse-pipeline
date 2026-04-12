@@ -39,7 +39,7 @@ if "Quantity" in df.columns:
 report_path = "/opt/hadoop/audit/silver_report.txt"
 
 with open(report_path, "w") as f:
-    f.write("SILVER LAYER AUDIT REPORT (AZURE - PARQUET)\n")
+    f.write("SILVER LAYER AUDIT REPORT \n")
     f.write("===========================\n")
     f.write(f"Total Rows: {row_count}\n")
     f.write(f"Duplicate Rows: {dup_count}\n")
