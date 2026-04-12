@@ -3,6 +3,7 @@ from pyspark.sql.functions import col, sum, count, max, datediff, lit, udf
 from pyspark.sql.types import DoubleType
 from pyspark.ml.feature import VectorAssembler, StandardScaler
 from pyspark.sql.functions import year, month, quarter, dayofweek, countDistinct
+from pyspark.sql.functions import length
 import os
 
 # Cấu hình xác thực Azure và tạo SparkSession
@@ -69,5 +70,19 @@ df_gold_business = df_silver.groupBy("InvoiceDate", "Country").agg(
 df_gold_business.write.format("delta").mode("overwrite") \
     .option("overwriteSchema", "true") \
     .save(f"abfss://gold@{account_name}.dfs.core.windows.net/gold_business_performance")
+
+# Tao bảng danh mục sản phẩm để phục vụ phân tích BI 
+# Lấy cặp StockCode và Description duy nhất (lấy cái tên dài nhất để tránh dữ liệu rác)
+df_products = df_silver.select("StockCode", "Description") \
+    .distinct() \
+    .withColumn("desc_len", length(col("Description"))) \
+    .orderBy(col("StockCode"), col("desc_len").desc()) \
+    .dropDuplicates(["StockCode"]) \
+    .select("StockCode", "Description")
+
+# Lưu bảng danh mục sản phẩm vào Gold Layer
+df_products.write.format("delta").mode("overwrite") \
+    .option("overwriteSchema", "true") \
+    .save(f"abfss://gold@{account_name}.dfs.core.windows.net/gold_products_catalog")#
 
 spark.stop()
