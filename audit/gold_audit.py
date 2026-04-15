@@ -2,7 +2,6 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, count, when
 
-# 1. CẤU HÌNH AZURE
 account_name = "nhom5storage"
 azure_key = os.environ.get("AZURE_STORAGE_ACCESS_KEY")
 
